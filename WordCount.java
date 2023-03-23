@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.StringTokenizer;
 
-//Hadoop imports import org.apache.hadoop.fs.Path; 
+// Hadoop imports import org.apache.hadoop.fs.Path; 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
