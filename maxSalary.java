@@ -50,8 +50,17 @@ public class MaxSalary {
     } // The Reducer
 
     public static class Reduce extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
-        public void reduce(Text key, Iterable<DoubleWritable> values, OutputCollector<Text, DoubleWritable> collector,
-                Reporter reporter) throws IOException {
+        public void reduce(Text key, Iterable<DoubleWritable> values, OutputCollector<Text, IntWritable> collector,
+                Reporter reporter) throws IOException, InterruptedException {
+
+            // public static class Reduce extends MapReduceBase implements Reducer<Text,
+            // DoubleWritable, Text, DoubleWritable> {
+            // public void reduce(Text key, Iterator<IntWritable> values,
+            // OutputCollector<Text, IntWritable> collector,
+            // public void reduce(Text key, Iterable<DoubleWritable> values,
+            // OutputCollector<Text, DoubleWritable> collector,
+            // Reporter reporter) throws IOException {
+
             // Text key2 = key;
             // int count = 0;
             // //code to aggregate the occurrence
