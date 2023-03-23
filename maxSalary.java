@@ -1,3 +1,4 @@
+
 //Standard Java imports 
 import java.io.IOException;
 import java.util.Iterator;
@@ -31,17 +32,18 @@ public class MaxSalary {
 
         public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> collector, Reporter reporter)
                 throws IOException {
-            String line = value.toString();
-            StringTokenizer tokenizer = new StringTokenizer(line,",");
-            while (tokenizer.hasMoreTokens()){
-            word.set(tokenizer.nextToken());
-            collector.collect(word, accumulator);
+            // String line = value.toString();
+            // StringTokenizer tokenizer = new StringTokenizer(line,",");
+            // while (tokenizer.hasMoreTokens()){
+            // word.set(tokenizer.nextToken());
+            // collector.collect(word, accumulator
 
-            // String[] fields = value.toString().split(",");
-            // if (fields.length >= 3) {
-            //     country.set(fields[0].trim());
-            //     salary.set(Double.parseDouble(fields[2].trim()));
-            //     context.write(country, salary);
+            String[] fields = value.toString().split(",");
+            if (fields.length >= 3) {
+                country.set(fields[0].trim());
+                salary.set(Double.parseDouble(fields[2].trim()));
+                // context.write(country, salary);
+                collector.collect(country, accumulator);
             }
         }
     } // The Reducer
@@ -57,12 +59,15 @@ public class MaxSalary {
             // }
             // System.out.println(key + "\t" + count);
             // collector.collect(key, new IntWritable(count));
+
             double maxSalary = Double.MIN_VALUE;
             for (DoubleWritable val : values) {
                 maxSalary = Math.max(maxSalary, val.get());
             }
+            System.out.println(key + "\t" + maxSalary);
             result.set(maxSalary);
-            context.write(key, result);
+            collector.collect(key, result);
+            // context.write(key, result);
         }
     }
 

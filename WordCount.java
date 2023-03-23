@@ -42,7 +42,7 @@ public class WordCount {
     public static class Reduce extends MapReduceBase implements Reducer<Text, IntWritable, Text, IntWritable> {
         public void reduce(Text key, Iterator<IntWritable> values, OutputCollector<Text, IntWritable> collector,
                 Reporter reporter) throws IOException {
-            Text key2 = key;
+            // Text key2 = key;
             int count = 0;
             // code to aggregate the occurrence
             while (values.hasNext()) {
