@@ -1,4 +1,3 @@
-
 //Standard Java imports 
 import java.io.IOException;
 import java.util.Iterator;
@@ -32,16 +31,17 @@ public class MaxSalary {
 
         public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> collector, Reporter reporter)
                 throws IOException {
-            // String line = value.toString();
-            // StringTokenizer tokenizer = new StringTokenizer(line,",");
-            // while (tokenizer.hasMoreTokens()){
-            // word.set(tokenizer.nextToken());
-            // collector.collect(word, accumulator);
-            String[] fields = value.toString().split(",");
-            if (fields.length >= 3) {
-                country.set(fields[0].trim());
-                salary.set(Double.parseDouble(fields[2].trim()));
-                context.write(country, salary);
+            String line = value.toString();
+            StringTokenizer tokenizer = new StringTokenizer(line,",");
+            while (tokenizer.hasMoreTokens()){
+            word.set(tokenizer.nextToken());
+            collector.collect(word, accumulator);
+
+            // String[] fields = value.toString().split(",");
+            // if (fields.length >= 3) {
+            //     country.set(fields[0].trim());
+            //     salary.set(Double.parseDouble(fields[2].trim()));
+            //     context.write(country, salary);
             }
         }
     } // The Reducer
