@@ -66,8 +66,9 @@ public class MaxSalary {
                 maxSalary = Math.max(maxSalary, val.get());
             }
             System.out.println(key + "\t" + maxSalary);
-            result.set(maxSalary);
-            collector.collect(key, result);
+            // result.set(maxSalary);
+            collector.collect(key, new DoubleWritable(maxSalary));
+            // context.write(key, new DoubleWritable(maxSalary));
             // context.write(key, result);
         }
     }
