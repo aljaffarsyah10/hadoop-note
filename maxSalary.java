@@ -9,6 +9,7 @@ import java.util.StringTokenizer;
 //Hadoop imports import org.apache.hadoop.fs.Path; 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.FileInputFormat;
 import org.apache.hadoop.mapred.FileOutputFormat;
@@ -74,7 +75,7 @@ public class MaxSalary {
     // The java main method to execute the MapReduce job
     public static void main(String[] args) throws Exception {
         // Code to create a new Job specifying the MapReduce class
-        final JobConf conf = new JobConf(WordCount.class);
+        final JobConf conf = new JobConf(MaxSalary.class);
         conf.setOutputKeyClass(Text.class);
         conf.setOutputValueClass(IntWritable.class);
         conf.setMapperClass(Map.class);
