@@ -5,9 +5,8 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.StringTokenizer;
-import java.io.*;
 
-//Hadoop imports import org.apache.hadoop.fs.Path; 
+// Hadoop imports import org.apache.hadoop.fs.Path; 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.DoubleWritable;
@@ -24,22 +23,22 @@ import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapred.TextInputFormat;
 import org.apache.hadoop.mapred.TextOutputFormat;
 
-public class MaxSalary {
+public class WordCount {
     // The Mapper
     public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, IntWritable> {
         private static final IntWritable accumulator = new IntWritable(1);
         private Text word = new Text();
-        private DoubleWritable salary = new DoubleWritable();
+        private IntWritable salary = new IntWritable();
         private Text country = new Text();
 
         public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> collector, Reporter reporter)
                 throws IOException {
             // String line = value.toString();
-            // StringTokenizer tokenizer = new StringTokenizer(line,",");
-            // while (tokenizer.hasMoreTokens()){
+            // StringTokenizer tokenizer = new StringTokenizer(line, ",");
+            // while (tokenizer.hasMoreTokens()) {
             // word.set(tokenizer.nextToken());
-            // collector.collect(word, accumulator
-
+            // collector.collect(word, accumulator);
+            // }
             String[] fields = value.toString().split(",");
             if (fields.length >= 3) {
                 country.set(fields[0].trim());
@@ -47,32 +46,29 @@ public class MaxSalary {
                 // context.write(country, salary);
                 collector.collect(country, accumulator);
             }
+
         }
     } // The Reducer
 
-    public abstract class Reduce extends MapReduceBase implements Reducer<Text, DoubleWritable, Text, DoubleWritable> {
-        // public void reduce(Text key, Iterator<IntWritable> values,
-        // OutputCollector<Text, IntWritable> collector,
-        public void reduce(Text key, Iterable<DoubleWritable> values,
-                OutputCollector<Text, DoubleWritable> collector,
+    public abstract class Reduce extends MapReduceBase implements Reducer<Text, IntWritable, Text, IntWritable> {
+        public void reduce(Text key, Iterator<IntWritable> values, OutputCollector<Text, IntWritable> collector,
                 Reporter reporter) throws IOException {
-
-            // Text key2 = key;
+            // // Text key2 = key;
             // int count = 0;
-            // //code to aggregate the occurrence
-            // while(values.hasNext()) {
+            // // code to aggregate the occurrence
+            // while (values.hasNext()) {
             // count += values.next().get();
             // }
             // System.out.println(key + "\t" + count);
             // collector.collect(key, new IntWritable(count));
 
-            double maxSalary = Double.MIN_VALUE;
-            for (DoubleWritable val : values) {
+            int maxSalary = Double.MIN_VALUE;
+            for (IntWritable val : values) {
                 maxSalary = Math.max(maxSalary, val.get());
             }
             System.out.println(key + "\t" + maxSalary);
             // result.set(maxSalary);
-            collector.collect(key, new DoubleWritable(maxSalary));
+            collector.collect(key, new IntWritable(maxSalary));
             // context.write(key, new DoubleWritable(maxSalary));
             // context.write(key, result);
         }
@@ -81,7 +77,7 @@ public class MaxSalary {
     // The java main method to execute the MapReduce job
     public static void main(String[] args) throws Exception {
         // Code to create a new Job specifying the MapReduce class
-        final JobConf conf = new JobConf(MaxSalary.class);
+        final JobConf conf = new JobConf(WordCount.class);
         conf.setOutputKeyClass(Text.class);
         conf.setOutputValueClass(IntWritable.class);
         conf.setMapperClass(Map.class);
