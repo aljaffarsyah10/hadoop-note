@@ -20,7 +20,7 @@ public void map(Object key,Text value,Context ctx) throws IOException, Interrupt
 {
 // String[] arr=value.toString().split("\\s");
 String[] arr=value.toString().split(",");
-ctx.write(new Text(arr[1].toString()), new Text((arr[0].toString()) + " " +arr[2].toString()));
+ctx.write(new Text(arr[1].toString()), new Text((arr[0]) + " " +arr[2].toString()));
 }
 }
 
