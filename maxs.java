@@ -15,8 +15,9 @@ public class empmap extends Mapper<Object, Text, Text, Text> {
 
 public void map(Object key,Text value,Context ctx) throws IOException, InterruptedException
 {
-String[] arr=value.toString().split("\\s");
-ctx.write(new Text(arr[2].toString()), new Text((arr[1].toString()) + " " +arr[4].toString()));
+// String[] arr=value.toString().split("\\s");
+String[] arr=value.toString().split(",");
+ctx.write(new Text(arr[1].toString()), new Text((arr[0].toString()) + " " +arr[2].toString()));
 }
 }
 
@@ -29,7 +30,8 @@ String s= "" ;
 String sal = " ";
 
 for (Text val : itr){
-String arr[] = val.toString().split("\\s");
+// String arr[] = val.toString().split("\\s");
+String arr[] = val.toString().split(",");
 if (maxsal < Integer.parseInt(arr[1]))
 {
 maxsal = Integer.parseInt(arr[1]);
