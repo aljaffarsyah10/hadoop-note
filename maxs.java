@@ -13,8 +13,8 @@ public class empmap extends Mapper<Object, Text, Text, Text> {
 
 public void map(Object key,Text value,Context ctx) throws IOException, InterruptedException
 {
-String[] arr=value.toString().split(“\\s”);
-ctx.write(new Text(arr[2].toString()), new Text((arr[1].toString()) + ” ” +arr[4].toString()));
+String[] arr=value.toString().split("\\s");
+ctx.write(new Text(arr[2].toString()), new Text((arr[1].toString()) + " " +arr[4].toString()));
 }
 }
 
@@ -23,11 +23,11 @@ public class empreduce extends Reducer<Text, Text,Text, Text>
 {
 public void reduce(Text key,Iterable<Text> itr,Context context) throws IOException, InterruptedException
 { int maxsal=0;
-String s= “” ;
-String sal = ” “;
+String s= "" ;
+String sal = " ";
 
 for (Text val : itr){
-String arr[] = val.toString().split(“\\s”);
+String arr[] = val.toString().split("\\s");
 if (maxsal < Integer.parseInt(arr[1]))
 {
 maxsal = Integer.parseInt(arr[1]);
@@ -38,7 +38,7 @@ s = arr[0].toString();
 }
 
 }
-context.write(new Text(key), new Text(s.toString() +”  ” + sal.toString()));
+context.write(new Text(key), new Text(s.toString() +"  " + sal.toString()));
 
 }
 
@@ -50,7 +50,7 @@ context.write(new Text(key), new Text(s.toString() +”  ” + sal.toString()));
 public static void main(String[] args) throws IllegalArgumentException, IOException, ClassNotFoundException, InterruptedException
 {
 Configuration conf=new Configuration();
-Job job=Job.getInstance(conf,”emain”);
+Job job=Job.getInstance(conf,"emain");
 job.setJarByClass(maxs.class);
 job.setMapperClass(empmap.class);
 //job.setNumReduceTasks(0);
