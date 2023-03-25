@@ -8,11 +8,11 @@ import java.io.*;
 
 //Hadoop imports 
 import org.apache.hadoop.fs.Path; 
-// import org.apache.hadoop.conf.Configuration;
-// import org.apache.hadoop.io.*;
-// import org.apache.hadoop.mapreduce.*;
-// import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-// import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -49,7 +49,7 @@ public class MaxSalary {
             String[] fields = value.toString().split(",");
             if (fields.length >= 3) {
                 country.set(fields[0].trim());
-                salary.set(Int.parseInt(fields[2].trim()));
+                salary.set(Integer.parseInt(fields[2].trim()));
                 // context.write(country, salary);
                 collector.collect(country, accumulator);
             }
@@ -72,7 +72,7 @@ public class MaxSalary {
             // System.out.println(key + "\t" + count);
             // collector.collect(key, new IntWritable(count));
 
-            Int maxSalary = Int.MIN_VALUE;
+            int maxSalary = Integer.MIN_VALUE;
             for (IntWritable val : values) {
                 maxSalary = Math.max(maxSalary, val.get());
             }
