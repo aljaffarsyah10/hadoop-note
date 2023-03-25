@@ -11,8 +11,8 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.*;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+// import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+// import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -46,13 +46,28 @@ public class MaxSalary {
             // word.set(tokenizer.nextToken());
             // collector.collect(word, accumulator
 
-            String[] fields = value.toString().split(",");
-            if (fields.length >= 3) {
-                country.set(fields[0].trim());
-                salary.set(Integer.parseInt(fields[2].trim()));
-                // context.write(country, salary);
-                collector.collect(country, accumulator);
-            }
+            //2
+            // String[] fields = value.toString().split(",");
+            // if (fields.length >= 3) {
+            //     country.set(fields[0].trim());
+            //     salary.set(Integer.parseInt(fields[2].trim()));
+            //     // context.write(country, salary);
+            //     collector.collect(country, accumulator);
+            // }
+
+            //3
+            String line = value.toString();
+            StringTokenizer tokenizer = new StringTokenizer(line, ",");
+
+            // String nomor = tokenizer.nextToken();
+            String countryName = tokenizer.nextToken();
+            String salaryStr = tokenizer.nextToken();
+            int salaryValue = Integer.parseInt(salaryStr);
+            
+            country.set(countryName);
+            salary.set(salaryValue);
+            
+            context.write(country, salary);
         }
     } // The Reducer
 
