@@ -30,13 +30,13 @@ public class MaxSalaryByCountry {
       String line = value.toString();  
       String[] w=line.split(",");  
       int sal=Integer.parseInt(w[2]);  
-      string name=Integer.parseInt(w[1]);
+      String name=Integer.parseInt(w[1]);
       context.write(new Text(name), new Text(name+","+sal));  
     }
   }
   
-  public static class Reduce extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
-    public void reduce(Text key, Iterable<DoubleWritable> values, Context context) throws IOException, InterruptedException {
+  public static class Reduce extends Reducer<Text, Text, Text, DoubleWritable> {
+    public void reduce(Text key, Iterable<Text> vlist, Context context) throws IOException, InterruptedException {
       // double maxSalary = Double.MIN_VALUE;
       
       // for (DoubleWritable value : values) {
@@ -46,14 +46,14 @@ public class MaxSalaryByCountry {
       // context.write(key, new DoubleWritable(maxSalary));
 
       int max=0;  
-      for(Text v:values)  
+      for(Text v:vlist)   
         {
               String line = v.toString();  
               String[] w=line.split(",");  
               int sal=Integer.parseInt(w[1]); 
               max=Math.max(max, sal);
         }  
-        context.write(new IntWritable(max), k); 
+        context.write(new IntWritable(max), key); 
     }
   }
   
