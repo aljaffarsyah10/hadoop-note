@@ -34,8 +34,8 @@ String sal = " ";
 
 for (Text val : itr){
 // String arr[] = val.toString().split("\\s");
-PrintEvent(val);
-String arr[] = val.toString().split(",");
+// Sytem.out.println(val);
+String[] arr = val.toString().split(",");
 if (maxsal < Integer.parseInt(arr[1]))
 {
 maxsal = Integer.parseInt(arr[1]);
