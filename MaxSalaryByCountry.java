@@ -14,29 +14,46 @@ public class MaxSalaryByCountry {
     private DoubleWritable salary = new DoubleWritable();
     
     public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-      String line = value.toString();
-      StringTokenizer tokenizer = new StringTokenizer(line, ",");
+      // String line = value.toString();
+      // StringTokenizer tokenizer = new StringTokenizer(line, ",");
       
-      String countryName = tokenizer.nextToken();
-      String salaryStr = tokenizer.nextToken();
-      double salaryValue = Double.parseDouble(salaryStr);
+      // String countryName = tokenizer.nextToken();
+      // String salaryStr = tokenizer.nextToken();
+      // double salaryValue = Double.parseDouble(salaryStr);
       
-      country.set(countryName);
-      salary.set(salaryValue);
+      // country.set(countryName);
+      // salary.set(salaryValue);
       
-      context.write(country, salary);
+      // context.write(country, salary);
+
+      //3
+      String line = value.toString();  
+      String[] w=line.split(",");  
+      int sal=Integer.parseInt(w[2]);  
+      string name=Integer.parseInt(w[1]);
+      context.write(new Text(name), new Text(name+","+sal));  
     }
   }
   
   public static class Reduce extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
     public void reduce(Text key, Iterable<DoubleWritable> values, Context context) throws IOException, InterruptedException {
-      double maxSalary = Double.MIN_VALUE;
+      // double maxSalary = Double.MIN_VALUE;
       
-      for (DoubleWritable value : values) {
-        maxSalary = Math.max(maxSalary, value.get());
-      }
+      // for (DoubleWritable value : values) {
+      //   maxSalary = Math.max(maxSalary, value.get());
+      // }
       
-      context.write(key, new DoubleWritable(maxSalary));
+      // context.write(key, new DoubleWritable(maxSalary));
+
+      int max=0;  
+      for(Text v:values)  
+        {
+              String line = v.toString();  
+              String[] w=line.split(",");  
+              int sal=Integer.parseInt(w[1]); 
+              max=Math.max(max, sal);
+        }  
+        context.write(new IntWritable(max), k); 
     }
   }
   
