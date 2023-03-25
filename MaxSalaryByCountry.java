@@ -9,53 +9,36 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class MaxSalaryByCountry {
   
-  public static class Map extends Mapper<LongWritable, Text, Text, DoubleWritable> {
-    private Text country = new Text();
-    private DoubleWritable salary = new DoubleWritable();
-    
-    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-      // String line = value.toString();
-      // StringTokenizer tokenizer = new StringTokenizer(line, ",");
-      
-      // String countryName = tokenizer.nextToken();
-      // String salaryStr = tokenizer.nextToken();
-      // double salaryValue = Double.parseDouble(salaryStr);
-      
-      // country.set(countryName);
-      // salary.set(salaryValue);
-      
-      // context.write(country, salary);
-
-      //3
-      String line = value.toString();  
-      String[] w=line.split(",");  
-      int sal=Integer.parseInt(w[2]);  
-      String name=Integer.parseInt(w[1]);
-      context.write(new Text(name), new Text(name+","+sal));  
-    }
+  public static class Map extends Mapper<LongWritable,Text,Text,Text>    
+  {  
+   public void map(LongWritable k,Text v, Context con)throws IOException, InterruptedException  
+   {  
+    String line = v.toString();  
+    String[] w=line.split(",");  
+    int sal=Integer.parseInt(w[3]);  
+    String name=Integer.parseInt(w[1]);
+    con.write(new Text(name), new Text(name+","+sal));  
+    }  
+  } 
+ 
+  public static class Reduce extends Reducer<Text,Text,IntWritable,Text>  
+  {  
+   public void reduce(Text k, Iterable<Text> vlist, Context con)
+   throws IOException , InterruptedException  
+      {  
+       int max=0;  
+       for(Text v:vlist)  
+    {
+         String line = v.toString();  
+         String[] w=line.split(",");  
+         int sal=Integer.parseInt(w[1]); 
+         max=Math.max(max, sal);
+    }  
+    con.write(new IntWritable(max), k);  
+   }
+ 
   }
-  
-  public static class Reduce extends Reducer<Text, Text, Text, DoubleWritable> {
-    public void reduce(Text key, Iterable<Text> vlist, Context context) throws IOException, InterruptedException {
-      // double maxSalary = Double.MIN_VALUE;
-      
-      // for (DoubleWritable value : values) {
-      //   maxSalary = Math.max(maxSalary, value.get());
-      // }
-      
-      // context.write(key, new DoubleWritable(maxSalary));
-
-      int max=0;  
-      for(Text v:vlist)   
-        {
-              String line = v.toString();  
-              String[] w=line.split(",");  
-              int sal=Integer.parseInt(w[1]); 
-              max=Math.max(max, sal);
-        }  
-        context.write(new IntWritable(max), key); 
-    }
-  }
+ 
   
   public static void main(String[] args) throws Exception {
     Configuration conf = new Configuration();
