@@ -12,12 +12,11 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class maxs {
+public class MaxSalary {
 
   public static class Map extends Mapper<Object, Text, Text, Text> {
 
     public void map(Object key, Text value, Context ctx) throws IOException, InterruptedException {
-      // String[] arr=value.toString().split("\\s");
       String[] arr = value.toString().split(",");
       ctx.write(new Text(arr[1].toString()), new Text((arr[0].toString()) + "," + arr[2].toString()));
     }
@@ -30,29 +29,22 @@ public class maxs {
       String sal = " ";
 
       for (Text val : itr) {
-        // String arr[] = val.toString().split("\\s");
-        // Sytem.out.println(val);
         String arr[] = val.toString().split(",");
         if (maxsal < Integer.parseInt(arr[1])) {
           maxsal = Integer.parseInt(arr[1]);
           sal = arr[1].toString();
-
           s = arr[0].toString();
-
         }
-
       }
       context.write(new Text(key), new Text(s.toString() + "  " + sal.toString()));
-
     }
-
   }
 
   public static void main(String[] args)
       throws IllegalArgumentException, IOException, ClassNotFoundException, InterruptedException {
     Configuration conf = new Configuration();
     Job job = Job.getInstance(conf, "MaxSalary");
-    job.setJarByClass(maxs.class);
+    job.setJarByClass(MaxSalary.class);
     job.setMapperClass(Map.class);
     // job.setNumReduceTasks(0);
     job.setReducerClass(Reduce.class);
