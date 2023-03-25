@@ -7,7 +7,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public final class empmain {
+public final class maxs {
 
 public class empmap extends Mapper<Object, Text, Text, Text> {
 
@@ -51,7 +51,7 @@ public static void main(String[] args) throws IllegalArgumentException, IOExcept
 {
 Configuration conf=new Configuration();
 Job job=Job.getInstance(conf,”emain”);
-job.setJarByClass(empmain.class);
+job.setJarByClass(maxs.class);
 job.setMapperClass(empmap.class);
 //job.setNumReduceTasks(0);
 job.setReducerClass(empreduce.class);
