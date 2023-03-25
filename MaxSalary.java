@@ -6,7 +6,15 @@ import java.util.regex.Pattern;
 import java.util.StringTokenizer;
 import java.io.*;
 
-//Hadoop imports import org.apache.hadoop.fs.Path; 
+//Hadoop imports 
+import org.apache.hadoop.fs.Path; 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.DoubleWritable;
@@ -96,5 +104,6 @@ public class MaxSalary {
         FileOutputFormat.setOutputPath(conf, new Path(args[1]));
         // statement to execute the job
         JobClient.runJob(conf);
+        
     }
 }
