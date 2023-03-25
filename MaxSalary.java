@@ -8,12 +8,11 @@ import java.io.*;
 
 //Hadoop imports 
 import org.apache.hadoop.fs.Path; 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.*;
-import org.apache.hadoop.mapreduce.*;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+// import org.apache.hadoop.conf.Configuration;
+// import org.apache.hadoop.io.*;
+// import org.apache.hadoop.mapreduce.*;
+// import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+// import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -36,7 +35,7 @@ public class MaxSalary {
     public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, IntWritable> {
         private static final IntWritable accumulator = new IntWritable(1);
         private Text word = new Text();
-        private DoubleWritable salary = new DoubleWritable();
+        private IntWritable salary = new IntWritable();
         private Text country = new Text();
 
         public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> collector, Reporter reporter)
@@ -50,18 +49,18 @@ public class MaxSalary {
             String[] fields = value.toString().split(",");
             if (fields.length >= 3) {
                 country.set(fields[0].trim());
-                salary.set(Double.parseDouble(fields[2].trim()));
+                salary.set(Int.parseInt(fields[2].trim()));
                 // context.write(country, salary);
                 collector.collect(country, accumulator);
             }
         }
     } // The Reducer
 
-    public abstract class Reduce extends MapReduceBase implements Reducer<Text, DoubleWritable, Text, DoubleWritable> {
+    public abstract class Reduce extends MapReduceBase implements Reducer<Text, IntWritable, Text, IntWritable> {
         // public void reduce(Text key, Iterator<IntWritable> values,
         // OutputCollector<Text, IntWritable> collector,
-        public void reduce(Text key, Iterable<DoubleWritable> values,
-                OutputCollector<Text, DoubleWritable> collector,
+        public void reduce(Text key, Iterable<IntWritable> values,
+                OutputCollector<Text, IntWritable> collector,
                 Reporter reporter) throws IOException {
 
             // Text key2 = key;
@@ -73,14 +72,14 @@ public class MaxSalary {
             // System.out.println(key + "\t" + count);
             // collector.collect(key, new IntWritable(count));
 
-            double maxSalary = Double.MIN_VALUE;
-            for (DoubleWritable val : values) {
+            Int maxSalary = Int.MIN_VALUE;
+            for (IntWritable val : values) {
                 maxSalary = Math.max(maxSalary, val.get());
             }
             System.out.println(key + "\t" + maxSalary);
             // result.set(maxSalary);
-            collector.collect(key, new DoubleWritable(maxSalary));
-            // context.write(key, new DoubleWritable(maxSalary));
+            collector.collect(key, new IntWritable(maxSalary));
+            // context.write(key, new IntWritable(maxSalary));
             // context.write(key, result);
         }
     }
@@ -90,7 +89,7 @@ public class MaxSalary {
         // Code to create a new Job specifying the MapReduce class
         final JobConf conf = new JobConf(MaxSalary.class);
         conf.setOutputKeyClass(Text.class);
-        conf.setOutputValueClass(DoubleWritable.class);
+        conf.setOutputValueClass(IntWritable.class);
         conf.setMapperClass(Map.class);
         // Combiner is commented out – to be used in bonus activity
         // conf.setCombinerClass(Reduce.class);
