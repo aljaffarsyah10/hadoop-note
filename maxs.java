@@ -1,78 +1,134 @@
+//Standard Java imports
+import java.io.*;
 import java.io.IOException;
-
-import javax.print.event.PrintEvent;
-
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.hadoop.conf.Configuration;
+//Hadoop imports
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.io.*;
+import org.apache.hadoop.io.DoubleWritable;
+// import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+// import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapred.FileInputFormat;
+import org.apache.hadoop.mapred.FileOutputFormat;
+import org.apache.hadoop.mapred.JobClient;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.MapReduceBase;
+import org.apache.hadoop.mapred.Mapper;
+import org.apache.hadoop.mapred.OutputCollector;
+import org.apache.hadoop.mapred.Reducer;
+import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.mapred.TextInputFormat;
+import org.apache.hadoop.mapred.TextOutputFormat;
+import org.apache.hadoop.mapreduce.*;
 
-public class maxs {
+public class MaxSalary {
 
-public static class empmap extends Mapper<Object, Text, Text, Text> {
+  // The Mapper
+  public static class Map
+    extends MapReduceBase
+    implements Mapper<LongWritable, Text, Text, IntWritable> {
 
-public void map(Object key,Text value,Context ctx) throws IOException, InterruptedException
-{
-// String[] arr=value.toString().split("\\s");
-String[] arr=value.toString().split(",");
-ctx.write(new Text(arr[1].toString()), new Text((arr[0]) + " " +arr[2].toString()));
-}
-}
+    private static final IntWritable accumulator = new IntWritable(1);
+    private Text word = new Text();
+    private IntWritable salary = new IntWritable();
+    private Text country = new Text();
 
+    public void map(
+      LongWritable key,
+      Text value,
+      OutputCollector<Text, IntWritable> collector,
+      Reporter reporter
+    ) throws IOException {
+      // String line = value.toString();
+      // StringTokenizer tokenizer = new StringTokenizer(line,",");
+      // while (tokenizer.hasMoreTokens()){
+      // word.set(tokenizer.nextToken());
+      // collector.collect(word, accumulator
 
-public static class empreduce extends Reducer<Text, Text,Text, Text>
-{
-public void reduce(Text key,Iterable<Text> itr,Context context) throws IOException, InterruptedException
-{ int maxsal=0;
-String s= "" ;
-String sal = " ";
+      //2
+      // String[] fields = value.toString().split(",");
+      // if (fields.length >= 3) {
+      //     country.set(fields[0].trim());
+      //     salary.set(Integer.parseInt(fields[2].trim()));
+      //     // context.write(country, salary);
+      //     collector.collect(country, accumulator);
+      // }
 
-for (Text val : itr){
-// String arr[] = val.toString().split("\\s");
-// Sytem.out.println(val);
-String arr[] = val.toString().split(",");
-if (maxsal < Integer.parseInt(arr[1]))
-{
-maxsal = Integer.parseInt(arr[1]);
-sal = arr[1].toString();
+      //3
+      String line = value.toString();
+      StringTokenizer tokenizer = new StringTokenizer(line, ",");
 
-s = arr[0].toString();
+      // String nomor = tokenizer.nextToken();
+      String countryName = tokenizer.nextToken();
+      String salaryStr = tokenizer.nextToken();
+      int salaryValue = Integer.parseInt(salaryStr);
 
-}
+      country.set(countryName);
+      salary.set(salaryValue);
 
-}
-context.write(new Text(key), new Text(s.toString() +"  " + sal.toString()));
+      context.write(country, salary);
+    }
+  } // The Reducer
 
-}
+  public abstract class Reduce
+    extends MapReduceBase
+    implements Reducer<Text, IntWritable, Text, IntWritable> {
 
-}
+    // public void reduce(Text key, Iterator<IntWritable> values,
+    // OutputCollector<Text, IntWritable> collector,
+    public void reduce(
+      Text key,
+      Iterable<IntWritable> values,
+      OutputCollector<Text, IntWritable> collector,
+      Reporter reporter
+    ) throws IOException {
+      // Text key2 = key;
+      // int count = 0;
+      // //code to aggregate the occurrence
+      // while(values.hasNext()) {
+      // count += values.next().get();
+      // }
+      // System.out.println(key + "\t" + count);
+      // collector.collect(key, new IntWritable(count));
 
+      int maxSalary = Integer.MIN_VALUE;
+      for (IntWritable val : values) {
+        maxSalary = Math.max(maxSalary, val.get());
+      }
+      System.out.println(key + "\t" + maxSalary);
+      // result.set(maxSalary);
+      collector.collect(key, new IntWritable(maxSalary));
+      // context.write(key, new IntWritable(maxSalary));
+      // context.write(key, result);
+    }
+  }
 
+  // The java main method to execute the MapReduce job
+  public static void main(String[] args) throws Exception {
+    // Code to create a new Job specifying the MapReduce class
+    final JobConf conf = new JobConf(MaxSalary.class);
+    conf.setOutputKeyClass(Text.class);
+    conf.setOutputValueClass(IntWritable.class);
+    conf.setMapperClass(Map.class);
+    // Combiner is commented out – to be used in bonus activity
+    // conf.setCombinerClass(Reduce.class);
+    conf.setReducerClass(Reduce.class);
+    conf.setInputFormat(TextInputFormat.class);
+    conf.setOutputFormat(TextOutputFormat.class);
+    // File Input argument passed as a command line argument
+    FileInputFormat.setInputPaths(conf, new Path(args[0]));
 
-
-public static void main(String[] args) throws IllegalArgumentException, IOException, ClassNotFoundException, InterruptedException
-{
-Configuration conf=new Configuration();
-Job job=Job.getInstance(conf,"emain");
-job.setJarByClass(maxs.class);
-job.setMapperClass(empmap.class);
-//job.setNumReduceTasks(0);
-job.setReducerClass(empreduce.class);
-//job.setMapOutputKeyClass(Text.class);
-////job.setReducerClass(Empreduce.class);
-//job.setMapOutputValueClass(Text.class);
-job.setOutputKeyClass(Text.class);
-//job.setOutputValueClass(ArrayWritable.class);
-job.setOutputValueClass(Text.class);
-FileInputFormat.addInputPath(job, new Path(args[0]));
-FileOutputFormat.setOutputPath(job, new Path(args[1]));
-System.exit(job.waitForCompletion(true) ? 0 : 1);
-
-}
-
+    // File Output argument passed as a command line argument
+    FileOutputFormat.setOutputPath(conf, new Path(args[1]));
+    // statement to execute the job
+    JobClient.runJob(conf);
+  }
 }
