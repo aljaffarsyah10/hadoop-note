@@ -1,4 +1,7 @@
 import java.io.IOException;
+
+import javax.print.event.PrintEvent;
+
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -9,9 +12,9 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 
-public final class maxs {
+public class maxs {
 
-public class empmap extends Mapper<Object, Text, Text, Text> {
+public static class empmap extends Mapper<Object, Text, Text, Text> {
 
 public void map(Object key,Text value,Context ctx) throws IOException, InterruptedException
 {
@@ -22,7 +25,7 @@ ctx.write(new Text(arr[1].toString()), new Text((arr[0].toString()) + " " +arr[2
 }
 
 
-public class empreduce extends Reducer<Text, Text,Text, Text>
+public static class empreduce extends Reducer<Text, Text,Text, Text>
 {
 public void reduce(Text key,Iterable<Text> itr,Context context) throws IOException, InterruptedException
 { int maxsal=0;
@@ -31,6 +34,7 @@ String sal = " ";
 
 for (Text val : itr){
 // String arr[] = val.toString().split("\\s");
+PrintEvent(val);
 String arr[] = val.toString().split(",");
 if (maxsal < Integer.parseInt(arr[1]))
 {
